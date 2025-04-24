@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clasifica tu sueño</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #1c1c1c;
+            color: white;
+        }
+        .form-container {
+            background-color: #121212;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+        }
+        .btn-yellow {
+            background-color: #ffc107;
+            border: none;
+        }
+        .btn-yellow:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h2>💰 <span class="text-warning">Ahorra</span></h2>
+        <p>Paso 2: Clasifica tu sueño y monto necesario</p>
+    </div>
+
+    <div class="mx-auto col-md-8 col-lg-6 form-container">
+        <form th:action="@{/ahorro/paso2}" method="post" th:object="${metaAhorro}">
+            <input type="hidden" th:field="*{id}" />
+
+            <!-- Clasificación -->
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Clasifica tu sueño</label>
+                <select class="form-select" id="categoria" th:field="*{categoria}">
+                    <option value="Educación">Educación</option>
+                    <option value="Viaje">Viaje</option>
+                    <option value="Vehículo">Vehículo</option>
+                    <option value="Negocio">Negocio</option>
+                    <option value="Negocio">Hogar</option>
+                    <option value="Negocio">Ropa</option>
+                    <option value="Negocio">Salud</option>
+                    <option value="Negocio">Tecnologia</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+
+            <!-- Monto necesario -->
+            <div class="mb-3">
+                <label for="monto" class="form-label">¿Cuánto dinero necesitas?</label>
+                <input type="text" class="form-control" id="monto" placeholder="$1.000.000" th:field="*{monto}" required>
+            </div>
+
+            <!-- Botón -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-yellow w-100">Continuar</button>
+
+            </div>
+            <div class="text-center mt-4">
+                <a th:href="@{'/ahorro/paso1'(id=${metaAhorro.id})}" class="btn btn-secondary">Atrás</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputMonto = document.getElementById('monto');
+
+        // Formatea mientras escribe
+        inputMonto.addEventListener('input', function (e) {
+            let valorNumerico = e.target.value.replace(/\D/g, '');
+            e.target.value = new Intl.NumberFormat('es-CO').format(valorNumerico);
+        });
+
+        // Antes de enviar, quita los puntos
+        inputMonto.form.addEventListener('submit', function () {
+            inputMonto.value = inputMonto.value.replace(/\./g, '').replace(/\s/g, '');
+        });
+    });
+</script>
+
+
+</body>
+</html>

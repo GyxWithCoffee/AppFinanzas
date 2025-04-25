@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - App Financiera</title>
@@ -9,86 +10,154 @@
             width: 40px;
             height: 40px;
         }
+
         .feature-card {
-            min-height: 130px;
+            min-height: 180px;
             text-align: center;
             padding: 1rem;
             border-radius: 1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
         }
+
         .feature-card:hover {
             transform: translateY(-5px);
+            cursor: pointer;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 3rem 0 2rem;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #999);
+        }
+
+        .section-divider::after {
+            background: linear-gradient(to left, transparent, #999);
+        }
+
+        .section-divider span {
+            padding: 0 1rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .news-card {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            cursor: pointer;
         }
     </style>
 </head>
+
 <body class="bg-light">
 
-<!-- Header -->
-<div class="container my-4">
-    <div class="d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-3">
-            <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center" style="width: 60px; height: 60px;">
-                <span th:text="${iniciales != null ? iniciales : 'IV'}">IV</span>
+    <!-- Header -->
+    <div class="container my-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center"
+                    style="width: 60px; height: 60px;">
+                    <span th:text="${iniciales != null ? iniciales : 'IV'}">IV</span>
+                </div>
+                <div>
+                    <h5 class="mb-0">Hola,
+                        <strong
+                            th:text="${nombre != null ? nombre : ''} + ' ' + (${apellido != null ? apellido : ''})">Usuario</strong>
+                    </h5>
+                    <a href="#" class="text-primary small">Editar perfil</a>
+                </div>
             </div>
-            <div>
-                <h5 class="mb-0">Hola,
-                    <strong th:text="${nombre != null ? nombre : ''} + ' ' + (${apellido != null ? apellido : ''})">Usuario</strong>
-                </h5>
-                <a href="#" class="text-primary small">Editar perfil</a>
-            </div>
-        </div>
-        <div class="d-flex gap-4">
-            <div class="text-center">
-                <img src="https://img.icons8.com/ios/50/money--v1.png" class="dashboard-icon" />
-                <div class="small">Monedas</div>
-            </div>
-            <div class="text-center">
-                <img src="https://img.icons8.com/ios/50/prize.png" class="dashboard-icon" />
-                <div class="small">Ranking</div>
-            </div>
-            <div class="text-center">
-                <img src="https://img.icons8.com/ios/50/appointment-reminders--v1.png" class="dashboard-icon" />
-                <div class="small">Notificaciones</div>
+            <div class="d-flex gap-4">
+                <div class="text-center">
+                    <img src="https://img.icons8.com/ios/50/money--v1.png" class="dashboard-icon" />
+                    <div class="small">Monedas</div>
+                </div>
+                <div class="text-center">
+                    <img src="https://img.icons8.com/ios/50/prize.png" class="dashboard-icon" />
+                    <div class="small">Ranking</div>
+                </div>
+                <div class="text-center">
+                    <img src="https://img.icons8.com/ios/50/appointment-reminders--v1.png" class="dashboard-icon" />
+                    <div class="small">Notificaciones</div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Banner -->
-<div class="container mb-4">
-    <div class="bg-white rounded p-3 d-flex align-items-center shadow-sm">
-        <h4 class="ms-3">¡Aprende y diviértete!</h4>
-    </div>
-</div>
-
-<!-- Features -->
-<div class="container">
-    <div class="row g-4">
-        <div class="col-6 col-md-4">
-            <a th:href="@{/ahorro}" style="text-decoration: none;">
-                <div class="feature-card bg-warning text-white fw-bold">💰 Ahorra</div>
-            </a>
-        </div>
-        <div class="col-6 col-md-4">
-            <a th:href="@{/analisis}" style="text-decoration: none;">
-            <div class="feature-card bg-warning text-white fw-bold">📊 Analiza</div>
-            </a>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="feature-card bg-success text-white fw-bold">💼 Planea</div>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="feature-card bg-success text-white fw-bold">📖 Aprende</div>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="feature-card bg-primary text-white fw-bold">🎮 Juega</div>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="feature-card bg-primary text-white fw-bold">🔔 Recuerda</div>
+    <!-- Banner -->
+    <div class="container mb-4">
+        <div class="bg-white rounded p-3 d-flex align-items-center shadow-sm">
+            <h4 class="ms-3">¡Aprende y diviértete!</h4>
         </div>
     </div>
-</div>
 
+    <!-- Features -->
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-6 col-md-4">
+                <a th:href="@{/ahorro}" style="text-decoration: none;">
+                    <div class="feature-card bg-warning text-white fw-bold">💰 Ahorra</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <a th:href="@{/analisis}" style="text-decoration: none;">
+                    <div class="feature-card bg-warning text-white fw-bold">📊 Analiza</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="feature-card bg-success text-white fw-bold">💼 Planea</div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="feature-card bg-success text-white fw-bold">📖 Aprende</div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="feature-card bg-primary text-white fw-bold">🎮 Juega</div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="feature-card bg-primary text-white fw-bold">🔔 Recuerda</div>
+            </div>
+        </div>
+    </div>
+        </div>
+
+        <!-- Depuración para verificar que las noticias están siendo pasadas -->
+        <div th:if="${noticias == null || noticias.isEmpty()}">
+            <p>No se encontraron noticias.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-6 col-md-4" th:each="noticia : ${noticias}" th:if="${noticia.enlace != null} and ${noticia.titulo.length() > 10}">
+                <a class="feature-card news-card fw-bold d-block text-decoration-none text-dark h-100"
+                   th:href="${noticia.enlace}" target="_blank">
+                    <div>
+                        <img src="https://img.lalr.co/cms/2025/04/07185145/ancla_trump_colcap_p15.jpg?" class="img-fluid rounded mb-2 w-100" />
+                    </div>
+                    <div>
+                        📰 <span th:text="${noticia.titulo}">Noticia ejemplo</span>
+                    </div>
+                    <div class="mt-2 small text-muted">
+                        Extraído de La República
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

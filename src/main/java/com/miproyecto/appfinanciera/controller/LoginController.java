@@ -1,21 +1,28 @@
 package com.miproyecto.appfinanciera.controller;
 
+import com.miproyecto.appfinanciera.dto.NoticiaDto;
+import com.miproyecto.appfinanciera.service.NoticiasService;
 import com.miproyecto.appfinanciera.model.Usuario;
 import com.miproyecto.appfinanciera.service.CustomOAuth2User;
 import com.miproyecto.appfinanciera.service.UsuarioDetalles;
 import com.miproyecto.appfinanciera.service.UsuarioService;
 import org.springframework.security.core.Authentication;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 
 @Controller
 public class LoginController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private NoticiasService noticiasService;
 
     @GetMapping("/login")
     public String mostrarLogin() {
@@ -50,8 +57,10 @@ public class LoginController {
             }
 
             String iniciales = "";
-            if (!nombre.isBlank()) iniciales += nombre.charAt(0);
-            if (!apellido.isBlank()) iniciales += apellido.charAt(0);
+            if (!nombre.isBlank())
+                iniciales += nombre.charAt(0);
+            if (!apellido.isBlank())
+                iniciales += apellido.charAt(0);
 
             model.addAttribute("nombre", nombre);
             model.addAttribute("apellido", apellido);
@@ -61,6 +70,15 @@ public class LoginController {
             model.addAttribute("apellido", "");
             model.addAttribute("iniciales", "IV");
         }
+
+        List<NoticiaDto> noticias = noticiasService.obtenerNoticias();
+        if (noticias.isEmpty()) {
+            System.out.println("No se encontraron noticias.");
+        } else {
+            System.out.println("Se encontraron " + noticias.size() + " noticias.");
+        }
+    
+        model.addAttribute("noticias", noticias);
 
         return "dashboard";
     }

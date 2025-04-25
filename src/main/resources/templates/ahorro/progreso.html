@@ -2,58 +2,52 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Progreso de tu Ahorro</title>
+    <title>Progreso de tus Metas</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
 <body class="bg-light">
 
 <div class="container my-5">
-    <h2 class="text-center text-warning fw-bold">📈 Progreso de tu Ahorro</h2>
-    <p class="text-center">¡Sigue así! Ya iniciaste el camino hacia tu meta 🎯</p>
+    <h2 class="text-center text-warning fw-bold">📊 Progreso de tu Ahorro</h2>
+    <p class="text-center">Aquí verás el avance de tus metas. ¡Sigue ahorrando!</p>
 
-    <div class="card p-4 shadow-sm">
-        <h4 class="fw-bold" th:text="${meta.descripcion}">Meta</h4>
+    <div class="row g-4">
+        <div class="col-md-6" th:each="meta : ${metas}">
+            <div class="card shadow-sm p-3 h-100">
+                <h5 class="fw-bold" th:text="${meta.descripcion}">Nombre de la meta</h5>
+                <p><strong>📂 Categoría:</strong> <span th:text="${meta.categoria}">Educación</span></p>
+                <p><strong>🎯 Monto:</strong> <span th:text="${meta.montoFormateado}">$0</span></p>
+                <p><strong>💰 Ahorrado:</strong> <span th:text="${meta.abonadoFormateado}">$0</span></p>
 
-        <ul class="list-group list-group-flush mb-3">
-            <li class="list-group-item">
-                <span>📂 Categoría:</span> <strong th:text="${meta.categoria}"></strong>
-            </li>
-            <li class="list-group-item">
-                <span>🎯 Meta total:</span> <strong th:text="${montoFormateado}"></strong>
-            </li>
-            <li class="list-group-item">
-                <span>💰 Ahorrado:</span> <strong th:text="${abonadoFormateado}"></strong>
-            </li>
-        </ul>
-
-        <!-- Progreso -->
-        <div class="mb-3">
-            <label class="form-label">Progreso:</label>
-            <div class="progress">
-                <div class="progress-bar bg-warning"
-                     role="progressbar"
-                     th:style="'width:' + ${progreso} + '%'">
-                    <span th:text="${progreso} + '%'"></span>
+                <label>Progreso:</label>
+                <div class="progress mb-2">
+                    <div class="progress-bar bg-warning" role="progressbar"
+                         th:style="'width:' + ${meta.progreso} + '%'"
+                         th:text="${meta.progreso + '%'}">
+                    </div>
                 </div>
+
+                <form th:action="@{/ahorro/abonar}" method="post" class="mb-2">
+                    <input type="hidden" name="id" th:value="${meta.id}">
+                    <div class="input-group">
+                        <input type="number" name="abono" class="form-control" placeholder="Ej. 10000" required>
+                        <button class="btn btn-warning">💸 Abonar</button>
+                    </div>
+                </form>
+
+                <form th:action="@{/ahorro/eliminar}" method="post">
+                    <input type="hidden" name="id" th:value="${meta.id}">
+                    <button class="btn btn-outline-danger w-100">🗑 Eliminar esta meta</button>
+                </form>
             </div>
         </div>
-
-        <!-- Formulario de abono -->
-        <form th:action="@{/ahorro/abonar}" method="post" class="mb-3">
-            <input type="hidden" name="id" th:value="${meta.id}">
-            <label for="abono" class="form-label">💵 Abonar a tu meta:</label>
-            <input type="number" id="abono" name="abono" class="form-control mb-2" min="1" placeholder="Ej. 10000" required>
-            <button class="btn btn-warning w-100">💸 Abonar</button>
-        </form>
-
-        <!-- Botón eliminar -->
-        <form th:action="@{/ahorro/eliminar}" method="post">
-            <input type="hidden" name="id" th:value="${meta.id}">
-            <button class="btn btn-outline-danger w-100">🗑 Eliminar esta meta</button>
-        </form>
     </div>
 
-    <div class="text-center mt-4">
+    <div class="text-center mt-5">
+        <a href="/ahorro/paso1" class="btn btn-warning btn-lg">➕ Nueva meta</a>
+    </div>
+
+    <div class="text-center mt-3">
         <a href="/dashboard" class="btn btn-secondary">Volver al inicio</a>
     </div>
 </div>

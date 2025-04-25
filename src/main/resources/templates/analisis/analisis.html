@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Analiza tu endeudamiento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+    <h2 class="text-center fw-bold text-warning mb-2">Analiza</h2>
+    <p class="text-center">Registra tus datos y descubre tu nivel de endeudamiento</p>
+
+    <!-- Barra de progreso -->
+    <div class="progress mb-4" style="height: 25px;">
+        <div class="progress-bar" role="progressbar"
+             th:style="'width: ' + ${porcentajeEndeudamiento} + '%'"
+             th:text="${porcentajeEndeudamiento + '%'}"></div>
+    </div>
+
+    <!-- Ingresos -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Paso 1: Ingresos</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/analisis/agregarIngreso}" method="post" class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="nombre" placeholder="Nombre del ingreso" required>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" name="categoria" required>
+                        <option value="">Tipo de ingreso</option>
+                        <option value="Fijo">Fijo</option>
+                        <option value="Variable">Variable</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" name="monto" placeholder="Valor ($)" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">+</button>
+                </div>
+            </form>
+
+            <ul class="list-group mt-3" th:each="ingreso : ${ingresos}">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <span th:text="${ingreso.nombre}"></span>
+                        (<span th:text="${ingreso.categoria}"></span>)
+                        -
+                        <span th:text="'$' + ${#numbers.formatDecimal(ingreso.monto, 0, 'COMMA', 2, 'POINT')}"></span>
+                    </span>
+                    <a th:href="@{/analisis/eliminarIngreso(id=${ingreso.id})}" class="btn btn-danger btn-sm">Eliminar</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer text-end fw-bold">
+            Total: <span th:text="${totalIngresosFormateado}"></span>
+        </div>
+    </div>
+
+    <!-- Deudas -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Paso 2: Deudas</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/analisis/agregarDeuda}" method="post" class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="nombre" placeholder="Nombre deuda" required>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" name="categoria" required>
+                        <option value="">Tipo de deuda</option>
+                        <option value="Consumo">Consumo</option>
+                        <option value="Educativa">Educativa</option>
+                        <option value="Hipoteca">Hipoteca</option>
+                        <option value="Crédito vehículo">Crédito vehículo</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" name="monto" placeholder="Valor ($)" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">+</button>
+                </div>
+            </form>
+
+            <ul class="list-group mt-3" th:each="deuda : ${deudas}">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <span th:text="${deuda.nombre}"></span>
+                        (<span th:text="${deuda.categoria}"></span>)
+                        -
+                        <span th:text="'$' + ${#numbers.formatDecimal(deuda.monto, 0, 'COMMA', 2, 'POINT')}"></span>
+                    </span>
+                    <a th:href="@{/analisis/eliminarDeuda(id=${deuda.id})}" class="btn btn-danger btn-sm">Eliminar</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer text-end fw-bold">
+            Total: <span th:text="${totalDeudasFormateado}"></span>
+        </div>
+    </div>
+
+    <!-- Resultado -->
+
+    <div class="alert mt-4 text-center" th:class="'alert alert-' + ${tipoConsejo}" role="alert">
+        <h4 class="fw-bold">¡Nivel de endeudamiento!</h4>
+        <p>
+            Tu nivel de endeudamiento es del
+            <strong th:text="${porcentajeEndeudamiento + '%'}"></strong>
+            y
+            <span th:if="${porcentajeEndeudamiento > 30}">supera el 30% recomendado.</span>
+            <span th:unless="${porcentajeEndeudamiento > 30}">está dentro del nivel recomendado.</span>
+        </p>
+        <p class="mt-3 mb-0 fw-semibold">
+            <span th:text="${consejoFinanciero}"></span>
+        </p>
+    </div>
+    <!-- Gráfico de pastel -->
+    <div class="card mt-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Distribución visual</h5>
+        </div>
+        <div class="card-body text-center">
+            <canvas id="graficaAnalisis" style="max-width: 300px; max-height: 300px; margin: auto;"></canvas>
+        </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <a th:href="@{/dashboard}" class="btn btn-warning px-5">Volver al inicio</a>
+    </div>
+
+
+</div>
+
+</body>
+
+</html>

@@ -107,33 +107,33 @@
         </div>
     </div>
 
-<!-- Features -->
-<div class="container">
-    <div class="row g-4">
-        <div class="col-6 col-md-4">
-            <a th:href="@{/ahorro/ahorro/paso1}" style="text-decoration: none;">
-                <div class="feature-card bg-warning text-white fw-bold">💰 Ahorra</div>
-            </a>
-        </div>
-        <div class="col-6 col-md-4">
-            <a th:href="@{/ahorro/analisis}" style="text-decoration: none;">
-                <div class="feature-card bg-warning text-white fw-bold">📊 Analiza</div>
-            </a>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="feature-card bg-success text-white fw-bold">💼 Planea</div>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="feature-card bg-success text-white fw-bold">📖 Aprende</div>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="feature-card bg-primary text-white fw-bold">🎮 Juega</div>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="feature-card bg-primary text-white fw-bold">🔔 Recuerda</div>
+    <!-- Features -->
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-6 col-md-4">
+                <a th:href="@{/ahorro}" style="text-decoration: none;">
+                    <div class="feature-card bg-warning text-white fw-bold">💰 Ahorra</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <a th:href="@{/analisis}" style="text-decoration: none;">
+                    <div class="feature-card bg-warning text-white fw-bold">📊 Analiza</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="feature-card bg-success text-white fw-bold">💼 Planea</div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="feature-card bg-success text-white fw-bold">📖 Aprende</div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="feature-card bg-primary text-white fw-bold">🎮 Juega</div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="feature-card bg-primary text-white fw-bold">🔔 Recuerda</div>
+            </div>
         </div>
     </div>
-</div>
 
     <div class="container">
         <div class="section-divider">
@@ -145,11 +145,21 @@
             <p>No se encontraron noticias.</p>
         </div>
 
-        <div class="col-6 col-md-4" th:each="noticia : ${noticias}">
-            <a class="feature-card news-card fw-bold d-block text-decoration-none text-dark" th:href="${noticia.enlace}"
-                target="_blank">
-                📰 <span th:text="${noticia.titulo}">Noticia ejemplo</span>
-            </a>
+        <div class="row g-4">
+            <div class="col-6 col-md-4" th:each="noticia : ${noticias}" th:if="${noticia.enlace != null} and ${noticia.titulo.length() > 10}">
+                <a class="feature-card news-card fw-bold d-block text-decoration-none text-dark h-100"
+                   th:href="${noticia.enlace}" target="_blank">
+                    <div>
+                        <img src="https://img.lalr.co/cms/2025/04/07185145/ancla_trump_colcap_p15.jpg?" class="img-fluid rounded mb-2 w-100" />
+                    </div>
+                    <div>
+                        📰 <span th:text="${noticia.titulo}">Noticia ejemplo</span>
+                    </div>
+                    <div class="mt-2 small text-muted">
+                        Extraído de La República
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 </body>

@@ -18,16 +18,21 @@ public class NoticiasService {
         List<NoticiaDto> noticias = new ArrayList<>();
         try {
             Document doc = Jsoup.connect("https://www.larepublica.co/peso-colombiano").get();
+    
             Elements elementos = doc.select(".first-news a");
-
+    
             for (Element elemento : elementos) {
                 String titulo = elemento.text();
                 String enlace = elemento.absUrl("href");
-
-                System.out.println("Título: " + titulo);
-                System.out.println("Enlace: " + enlace);
-
-                noticias.add(new NoticiaDto(titulo, enlace));
+                
+                // Buscar la imagen dentro del enlace
+                Element imagenElement = elemento.selectFirst("img");
+                String imagenUrl = (imagenElement != null) ? imagenElement.absUrl("src") : null;
+    
+                // Filtramos solo si tiene título y enlace
+                if (titulo != null && !titulo.isBlank() && enlace != null && !enlace.isBlank()) {
+                    noticias.add(new NoticiaDto(titulo, enlace, imagenUrl));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -35,4 +40,5 @@ public class NoticiasService {
         }
         return noticias;
     }
+    
 }

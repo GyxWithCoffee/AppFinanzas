@@ -4,8 +4,8 @@ import com.miproyecto.appfinanciera.model.MetaAhorro;
 import com.miproyecto.appfinanciera.model.Usuario;
 import com.miproyecto.appfinanciera.repository.MetaAhorroRepository;
 import com.miproyecto.appfinanciera.service.UsuarioDetalles;
+
 import com.miproyecto.appfinanciera.service.UsuarioService;
-import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

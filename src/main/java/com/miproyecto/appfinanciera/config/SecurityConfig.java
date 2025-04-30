@@ -50,8 +50,11 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/dashboard", true)
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll()
+                        .logoutUrl("/logout") // Aquí se registra la URL de logout
+                        .logoutSuccessUrl("/login?logout") // A dónde redirige luego de cerrar sesión
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .clearAuthentication(true)
                 );
 
         return http.build();

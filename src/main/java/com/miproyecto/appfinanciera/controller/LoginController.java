@@ -25,8 +25,23 @@ public class LoginController {
     private NoticiasService noticiasService;
 
     @GetMapping("/login")
-    public String mostrarLogin() {
-        return "login";
+    public String login(Model model, @RequestParam(required = false) String logout,
+                        @RequestParam(required = false) String error,
+                        @RequestParam(required = false) String registrado) {
+
+        if (logout != null) {
+            model.addAttribute("mensajeLogout", "Sesión cerrada con éxito.");
+        }
+
+        if (error != null) {
+            model.addAttribute("mensajeError", "Credenciales incorrectas.");
+        }
+
+        if (registrado != null) {
+            model.addAttribute("mensajeRegistro", "¡Registro exitoso! Ya puedes iniciar sesión.");
+        }
+
+        return "login"; // login.html
     }
 
     @GetMapping("/registro")

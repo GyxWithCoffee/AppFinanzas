@@ -40,5 +40,10 @@ public class NoticiasService {
         }
         return noticias;
     }
-    
+    public NoticiaDto obtenerUltimaNoticia() {
+        List<NoticiaDto> noticias = obtenerNoticias();
+        return noticias.isEmpty() ? null : noticias.get(0);
+    }
+
+
 }

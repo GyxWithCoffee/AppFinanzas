@@ -211,6 +211,6 @@ public class AhorroController {
     @PostMapping("/eliminar")
     public String eliminarMeta(@RequestParam("id") Long id) {
         metaAhorroRepository.deleteById(id);
-        return "redirect:/ahorro/progreso"
+        return "redirect:/ahorro/progreso";
     }
 }

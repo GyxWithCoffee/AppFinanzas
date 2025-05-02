@@ -56,47 +56,6 @@ public class LoginController {
         return "redirect:/login?registroExitoso";
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard(Model model, Authentication authentication) {
-        if (authentication != null && authentication.getPrincipal() != null) {
-            Object principal = authentication.getPrincipal();
-            String nombre = "";
-            String apellido = "";
-
-            if (principal instanceof CustomOAuth2User customUser) {
-                nombre = customUser.getUsuario().getNombre();
-                apellido = customUser.getUsuario().getApellido();
-            } else if (principal instanceof UsuarioDetalles userDetails) {
-                nombre = userDetails.getUsuario().getNombre();
-                apellido = userDetails.getUsuario().getApellido();
-            }
-
-            String iniciales = "";
-            if (!nombre.isBlank())
-                iniciales += nombre.charAt(0);
-            if (!apellido.isBlank())
-                iniciales += apellido.charAt(0);
-
-            model.addAttribute("nombre", nombre);
-            model.addAttribute("apellido", apellido);
-            model.addAttribute("iniciales", iniciales.toUpperCase());
-        } else {
-            model.addAttribute("nombre", "Invitado");
-            model.addAttribute("apellido", "");
-            model.addAttribute("iniciales", "IV");
-        }
-
-        List<NoticiaDto> noticias = noticiasService.obtenerNoticias();
-        if (noticias.isEmpty()) {
-            System.out.println("No se encontraron noticias.");
-        } else {
-            System.out.println("Se encontraron " + noticias.size() + " noticias.");
-        }
-    
-        model.addAttribute("noticias", noticias);
-
-        return "dashboard";
-    }
 
     @GetMapping("/")
     public String redirigirInicio() {

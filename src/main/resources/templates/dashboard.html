@@ -11,18 +11,19 @@
     <style>
         body {
             background-color: #f8f9fa;
-        }
-        body {
-            font-size: 1.1rem; /* o 18px */
+            font-size: 1.1rem;
         }
 
         h2, h5 {
-        font-size: 1.4rem; /* más grande */
+            font-size: 1.4rem;
         }
 
         .card-custom {
             padding: 2rem;
             font-size: 1.15rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            min-height: 120px;
         }
 
         .main-content {
@@ -30,21 +31,8 @@
             padding: 2rem;
         }
 
-        .sidebar {
-        font-size: 1.1rem;
-        }
-
-        .sidebar a {
-            padding: 1rem 1.25rem;
-        }
-
-        .card-custom {
-        min-height: 120px;
-        }
-
-        .card-custom {
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        #tipFinanciero {
+            transition: opacity 0.4s ease;
         }
     </style>
 </head>
@@ -83,10 +71,12 @@
 
         <!-- Consejos y noticias -->
         <div class="row">
+            <!-- Tip financiero -->
             <div class="col-lg-6 mb-4">
-                <div class="card card-custom p-3">
+                <div class="card card-custom p-3 bg-info text-dark">
                     <h5>📌 Tip financiero del día</h5>
-                    <p th:text="${tipFinanciero}">No gastes más de lo que ganas, ahorra antes de gastar.</p>
+                    <p id="tipFinanciero" th:text="${tipFinanciero}">No gastes más de lo que ganas.</p>
+                    <button class="btn btn-dark btn-sm mt-2" onclick="cambiarConsejo()">Ver otro</button>
                 </div>
             </div>
 
@@ -110,11 +100,42 @@
                         </div>
                     </a>
                 </div>
-            </div>
+                <!-- Noticia 2 (nueva agregada) -->
+                <div class="col-6 col-md-4">
+                    <a class="feature-card news-card fw-bold d-block text-decoration-none text-dark h-100"
+                       href="https://www.larepublica.co/finanzas/ban100-banco-w-y-pichincha-entre-los-bancos-con-las-tasas-mas-rentables-para-cdt-3994668"
+                       target="_blank">
+                        <div>
+                            <img src="https://img.lalr.co/cms/2024/11/08073231/WEB_Fin_TasaRentabilidadCDT.jpg?size=sm" class="img-fluid rounded mb-2 w-100" />
+                        </div>
+                        <div>
+                            💰 Bancos con tasas más rentables para CDT
+                        </div>
+                        <div class="mt-2 small text-muted">
+                            Extraído de La República
+                        </div>
+                    </a>
+                </div>
         </div>
 
     </div>
 </div>
 
+<!-- Script para cambiar consejo financiero -->
+<script>
+    function cambiarConsejo() {
+        fetch('/api/consejos/aleatorio')
+            .then(res => res.text())
+            .then(data => {
+                const p = document.getElementById('tipFinanciero');
+                p.style.opacity = 0;
+                setTimeout(() => {
+                    p.textContent = data;
+                    p.style.opacity = 1;
+                }, 300);
+            });
+    }
+</script>
+</div>
 </body>
 </html>

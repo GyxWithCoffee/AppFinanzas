@@ -28,6 +28,8 @@ public class MetaAhorro {
     // "Diario", "Semanal", "Mensual"
     @Column(nullable = true)
     private Long abonado = 0L;
+    @Column(nullable = false)
+    private boolean completada = false;
 
     public Long getAbonado() {
         return abonado;
@@ -61,4 +63,12 @@ public class MetaAhorro {
 
     public String getFrecuencia() { return frecuencia; }
     public void setFrecuencia(String frecuencia) { this.frecuencia = frecuencia; }
+
+    public boolean isCompletada() {
+        return completada;
+    }
+
+    public void setCompletada(boolean completada) {
+        this.completada = completada;
+    }
 }

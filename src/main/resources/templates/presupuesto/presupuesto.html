@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Presupuesto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #tip-financiero {
+            transition: opacity 0.4s ease;
+        }
+    </style>
+</head>
+<body class="bg-dark text-white">
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Contenido principal -->
+        <div class="col-lg-9">
+
+            <h2 class="fw-bold text-center mb-4 text-info">🧾 Presupuesto mensual</h2>
+
+            <!-- Registrar gasto -->
+            <div class="card bg-secondary mb-4">
+                <div class="card-header fw-bold">➕ Registrar nuevo gasto</div>
+                <div class="card-body">
+                    <form th:action="@{/presupuesto/guardar-gasto}" th:object="${nuevoGasto}" method="post" class="row g-3">
+                        <div class="col-md-3">
+                            <input type="text" th:field="*{nombre}" class="form-control" placeholder="Nombre del gasto" required>
+                        </div>
+                        <div class="col-md-2">
+                            <select th:field="*{tipo}" class="form-select" required>
+                                <option th:value="FIJO">Fijo</option>
+                                <option th:value="VARIABLE">Variable</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select th:field="*{categoria}" class="form-select" required>
+                                <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}">Categoría</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" step="0.01" th:field="*{monto}" class="form-control" placeholder="Valor ($)" required>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button class="btn btn-success w-100">Agregar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Asignar límite -->
+            <div class="card bg-secondary mb-4">
+                <div class="card-header fw-bold">🎯 Asignar límite por categoría</div>
+                <div class="card-body">
+                    <form th:action="@{/presupuesto/guardar-limite}" th:object="${nuevoLimite}" method="post" class="row g-3">
+                        <div class="col-md-6">
+                            <select th:field="*{categoria}" class="form-select" required>
+                                <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}">Categoría</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" step="0.01" th:field="*{limiteMensual}" class="form-control" placeholder="Límite ($)" required>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button class="btn btn-warning w-100">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Alertas educativas -->
+            <div th:if="${alertas != null}" class="mb-4">
+                <div class="alert alert-info" th:each="mensaje : ${alertas}" th:text="${mensaje}"></div>
+            </div>
+
+            <!-- Tabla de gastos -->
+            <div class="card bg-dark border-info mb-4">
+                <div class="card-header text-info fw-bold">💸 Gastos del mes actual</div>
+                <div class="card-body">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="gasto : ${gastos}">
+                            <td th:text="${gasto.nombre}">-</td>
+                            <td th:text="${gasto.categoria}">-</td>
+                            <td th:text="${gasto.tipo}">-</td>
+                            <td th:text="${#numbers.formatDecimal(gasto.monto, 1, 'COMMA', 2, 'POINT')}">-</td>
+                            <td th:text="${gasto.fecha}">-</td>
+                        </tr>
+                        <tr th:if="${gastos.size() == 0}">
+                            <td colspan="5" class="text-center">No hay gastos registrados este mes.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tabla de límites -->
+            <div class="card bg-dark border-warning mb-4">
+                <div class="card-header text-warning fw-bold">📊 Límites por categoría</div>
+                <div class="card-body">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Límite asignado ($)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="limite : ${limites}">
+                            <td th:text="${limite.categoria}">-</td>
+                            <td th:text="${#numbers.formatDecimal(limite.limiteMensual, 1, 'COMMA', 2, 'POINT')}">-</td>
+                        </tr>
+                        <tr th:if="${limites.size() == 0}">
+                            <td colspan="2" class="text-center">No hay límites asignados este mes.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráfico -->
+            <div class="card bg-dark border-success mb-4">
+                <div class="card-header text-success fw-bold">📉 Gasto vs Límite por categoría</div>
+                <div class="card-body">
+                    <canvas id="graficoPresupuesto"></canvas>
+                </div>
+            </div>
+
+            <!-- Botón volver -->
+            <div class="text-center mt-3">
+                <a th:href="@{/dashboard}" class="btn btn-warning px-5">Volver al inicio</a>
+            </div>
+        </div>
+
+        <!-- CONSEJERO -->
+        <div class="col-lg-3">
+            <div class="card bg-info text-dark sticky-top mb-4" style="top: 1rem;">
+                <div class="card-header fw-bold">🤓 Consejo financiero</div>
+                <div class="card-body">
+                    <p id="tip-financiero" th:text="${tipFinanciero}">Aquí va un consejo aleatorio.</p>
+                    <button class="btn btn-sm btn-outline-dark mt-2 w-100" onclick="verOtroConsejo()">Ver otro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script gráfico -->
+<script th:inline="javascript">
+    const dataGastos = /*[[${gastoPorCategoria}]]*/ {};
+    const dataLimites = /*[[${limitePorCategoria}]]*/ {};
+
+    const labels = Object.keys(dataLimites);
+    const gastos = labels.map(cat => dataGastos[cat] || 0);
+    const limites = labels.map(cat => dataLimites[cat]);
+
+    const ctx = document.getElementById('graficoPresupuesto');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Gasto real',
+                    data: gastos,
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                },
+                {
+                    label: 'Límite mensual',
+                    data: limites,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Script para cambiar el consejo con animación -->
+<script>
+    function verOtroConsejo() {
+        const p = document.getElementById('tip-financiero');
+        p.style.opacity = 0;
+
+        fetch('/api/consejos/aleatorio')
+            .then(res => res.text())
+            .then(data => {
+                setTimeout(() => {
+                    p.innerText = data;
+                    p.style.opacity = 1;
+                }, 400);
+            });
+    }
+</script>
+
+</body>
+</html>

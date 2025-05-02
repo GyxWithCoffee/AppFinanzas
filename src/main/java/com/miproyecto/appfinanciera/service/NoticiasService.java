@@ -15,6 +15,7 @@ import java.util.List;
 public class NoticiasService {
 
     public List<NoticiaDto> obtenerNoticias() {
+
         List<NoticiaDto> noticias = new ArrayList<>();
         try {
             Document doc = Jsoup.connect("https://www.larepublica.co/peso-colombiano").get();

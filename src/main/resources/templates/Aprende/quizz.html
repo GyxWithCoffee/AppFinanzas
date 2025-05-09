@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quizz | [[${leccion.titulo}]]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .btn-option {
+            margin-bottom: 15px;
+            text-align: left;
+            width: 100%;
+        }
+        .btn-option.correct {
+            background-color: #28a745 !important;
+            color: white;
+        }
+        .btn-option.incorrect {
+            background-color: #dc3545 !important;
+            color: white;
+        }
+        .progress {
+            height: 20px;
+            background-color: #e9ecef;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="quiz-container">
+        <h3 class="text-center mb-4" th:text="${leccion.titulo}">Título</h3>
+        <div class="progress mb-4">
+            <div id="barraProgreso" class="progress-bar bg-info" role="progressbar" style="width: 0%"></div>
+        </div>
+
+        <div th:each="pregunta, stat : ${preguntas}" th:id="'pregunta-' + ${stat.index}" class="pregunta"
+             th:classappend="${stat.index != 0} ? 'd-none'">
+            <h5 th:text="${pregunta.texto}">Texto de la pregunta</h5>
+
+            <button type="button" class="btn btn-outline-dark btn-option"
+                    th:each="opcion : ${pregunta.opciones}"
+                    th:text="${opcion.texto}"
+                    th:attr="data-respuesta=${opcion.valor}, data-correcta=${pregunta.respuestaCorrecta}">
+            </button>
+
+            <div th:if="${pregunta.tip != null}" class="alert alert-warning mt-3 d-none tip-box">
+                <strong>💡 Tip:</strong> <span th:text="${pregunta.tip}">Tip útil para la pregunta</span>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button id="btnSiguiente" class="btn btn-primary">Siguiente</button>
+        </div>
+    </div>
+</div>
+
+<form id="form-completar" th:action="@{'/aprende/quizz/completar/' + ${leccion.id}}" method="post" style="display: none;"></form>
+
+<div class="modal fade" id="modalFinal" tabindex="-1" aria-labelledby="modalFinalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFinalLabel">🎉 ¡Felicidades!</h5>
+            </div>
+            <div class="modal-body">
+                Has completado esta lección con éxito. Puedes verla como <strong>✅ Completada</strong> en la lista.
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success" onclick="document.getElementById('form-completar').submit();">
+                    Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let currentIndex = 0;
+    const preguntas = document.querySelectorAll('.pregunta');
+    const total = preguntas.length;
+    const barra = document.getElementById('barraProgreso');
+    const btnSiguiente = document.getElementById('btnSiguiente');
+
+    function actualizarProgreso() {
+        const porcentaje = ((currentIndex + 1) / total) * 100;
+        barra.style.width = porcentaje + "%";
+    }
+
+    function mostrarPregunta(index) {
+        preguntas.forEach(p => p.classList.add("d-none"));
+        preguntas[index].classList.remove("d-none");
+        actualizarProgreso();
+    }
+
+    document.querySelectorAll('.btn-option').forEach(btn => {
+        btn.addEventListener("click", function () {
+            const contenedor = btn.closest(".pregunta");
+            const correcta = btn.getAttribute("data-correcta");
+            const seleccion = btn.getAttribute("data-respuesta");
+
+            contenedor.querySelectorAll(".btn-option").forEach(b => {
+                const resp = b.getAttribute("data-respuesta");
+                if (resp === correcta) {
+                    b.classList.add("correct");
+                } else {
+                    b.classList.add("incorrect");
+                }
+                b.disabled = true;
+            });
+
+            if (seleccion !== correcta) {
+                contenedor.querySelector(".tip-box").classList.remove("d-none");
+            }
+        });
+    });
+
+    btnSiguiente.addEventListener("click", () => {
+        if (currentIndex + 1 < total) {
+            currentIndex++;
+            mostrarPregunta(currentIndex);
+        } else {
+            const modal = new bootstrap.Modal(document.getElementById("modalFinal"));
+            modal.show();
+        }
+    });
+
+    mostrarPregunta(0);
+</script>
+</body>
+</html>

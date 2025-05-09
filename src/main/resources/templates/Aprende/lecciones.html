@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lecciones | [[${categoria}]]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .leccion-card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease-in-out;
+            background-color: #fff;
+        }
+
+        .leccion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .badge-completa {
+            background-color: #198754;
+            color: white;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+
+        .btn-leccion {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+            transition: 0.2s ease;
+        }
+
+        .btn-leccion:hover {
+            background-color: #0b5ed7;
+        }
+
+        .titulo-leccion {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <h2 class="text-center mb-5">📚 Lecciones sobre <span th:text="${categoria}">Categoría</span></h2>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="leccion : ${lecciones}">
+            <div class="leccion-card h-100 text-center">
+                <div class="titulo-leccion mb-3" th:text="${leccion.titulo}">Título</div>
+                <a th:href="@{'/aprende/detalle/' + ${leccion.id}}" class="btn btn-leccion w-100">Ver lección</a>
+                <div th:if="${completadas.contains(leccion.id)}" class="badge-completa">
+                    ✅ Completada
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/aprende" class="btn btn-outline-secondary">← Volver</a>
+    </div>
+</div>
+</body>
+</html>

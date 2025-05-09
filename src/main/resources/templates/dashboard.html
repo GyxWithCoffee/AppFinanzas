@@ -79,6 +79,17 @@
                     <button class="btn btn-dark btn-sm mt-2" onclick="cambiarConsejo()">Ver otro</button>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="card card-custom p-3 bg-primary text-white">
+                    <h5>Progreso educativo</h5>
+                    <p class="mb-1">
+                        Lecciones completadas:
+                        <span th:text="${leccionesCompletadas}">0</span>/<span th:text="${totalLecciones}">0</span>
+                    </p>
+                    <a th:href="@{/aprende}" class="btn btn-light btn-sm mt-2">Ir a Aprende</a>
+                </div>
+            </div>
+
 
             <!-- Depuración para verificar que las noticias están siendo pasadas -->
             <div th:if="${noticias == null || noticias.isEmpty()}">

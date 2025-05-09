@@ -3,9 +3,7 @@ package com.miproyecto.appfinanciera.controller;
 import com.miproyecto.appfinanciera.dto.NoticiaDto;
 import com.miproyecto.appfinanciera.model.MetaAhorro;
 import com.miproyecto.appfinanciera.model.Usuario;
-import com.miproyecto.appfinanciera.repository.DeudaRepository;
-import com.miproyecto.appfinanciera.repository.IngresoRepository;
-import com.miproyecto.appfinanciera.repository.MetaAhorroRepository;
+import com.miproyecto.appfinanciera.repository.*;
 import com.miproyecto.appfinanciera.service.ConsejoFinancieroService;
 import com.miproyecto.appfinanciera.service.NoticiasService;
 import com.miproyecto.appfinanciera.service.UsuarioService;
@@ -35,8 +33,15 @@ public class DashboardController {
 
     @Autowired
     private ConsejoFinancieroService consejoFinancieroService;
+
     @Autowired
     private NoticiasService noticiasService;
+
+    @Autowired
+    private LeccionRepository leccionRepository;
+
+    @Autowired
+    private LeccionCompletadaRepository leccionCompletadaRepository;
 
     @GetMapping("/dashboard")
     public String mostrarDashboard(Model model, Authentication auth) {
@@ -60,9 +65,16 @@ public class DashboardController {
         // Tip financiero del día
         String tip = consejoFinancieroService.obtenerConsejoAleatorio();
         model.addAttribute("tipFinanciero", tip);
+
+        // Noticias
         List<NoticiaDto> noticias = noticiasService.obtenerNoticias();
         model.addAttribute("noticias", noticias);
 
+        // Progreso educativo
+        int totalLecciones = (int) leccionRepository.count();
+        int leccionesCompletadas = leccionCompletadaRepository.countByUsuario(usuario);
+        model.addAttribute("totalLecciones", totalLecciones);
+        model.addAttribute("leccionesCompletadas", leccionesCompletadas);
 
         return "/dashboard";
     }
